@@ -1,37 +1,36 @@
 {
-  "name": "kambaz-next-js",
-  "version": "0.1.0",
-  "private": true,
+  "type": "module",
+  "name": "kambaz-node-server-app",
+  "version": "1.0.0",
+  "description": "Node.js HTTP Web server for the Kambaz application",
+  "keywords": [
+    "Node",
+    "REST",
+    "Server",
+    "HTTP",
+    "Web",
+    "Development",
+    "CS5610",
+    "CS4550"
+  ],
+  "homepage": "https://github.com/saulmanz/kambaz-node-server-app#readme",
+  "bugs": {
+    "url": "https://github.com/saulmanz/kambaz-node-server-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saulmanz/kambaz-node-server-app.git"
+  },
+  "license": "ISC",
+  "author": "Saul Manzanares",
+  "main": "index.js",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.9.2",
-    "axios": "^1.13.2",
-    "bootstrap": "^5.3.0",
-    "dotenv": "^17.2.3",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
-    "express-session": "^1.18.2",
-    "next": "15.5.3",
-    "react": "19.1.0",
-    "react-bootstrap": "^2.10.10",
-    "react-dom": "19.1.0",
-    "react-icons": "^4.12.0",
-    "react-redux": "^9.2.0",
-    "redux": "^5.0.1",
-    "uuid": "^13.0.0"
+    "nodemon": "^3.1.11"
   },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.3",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+  "start": "node index.js"
 }
