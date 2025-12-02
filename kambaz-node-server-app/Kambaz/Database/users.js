@@ -3,7 +3,7 @@ export default [
   {
     "_id": "123",
     "username": "iron_man",
-    "password": "123",
+    "password": "a",
     "firstName": "Tony",
     "lastName": "Stark",
     "email": "tony@stark.com",

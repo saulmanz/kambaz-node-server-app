@@ -1,34 +1,44 @@
 import { v4 as uuidv4 } from "uuid";
-export default function ModulesDao(db) {
- function findModulesForCourse(courseId) {
-   const { modules } = db;
-   return modules.filter((module) => module.course === courseId);
- }
+import model from "../Courses/model.js";
 
-function createModule(module) {
-  const newModule = { ...module, _id: uuidv4(), lessons: [] };
-  db.modules = [...(db.modules || []), newModule];
-  return newModule;
-}
+export default function ModulesDao() {
+  
+  async function findModulesForCourse(courseId) {
+    const course = await model.findById(courseId);
+    if (!course) throw new Error("Course not found");
+    return course.modules || []; // always return array
+  }
 
-function deleteModule(moduleId) {
-  const { modules } = db;
-  const before = modules.length;
-  db.modules = modules.filter((module) => module._id !== moduleId);
-  const after = db.modules.length;
-  return { deleted: before !== after };
-}
+  async function createModule(module) {
+    const course = await model.findById(module.course);
+    if (!course) throw new Error("Course not found");
+    const newModule = { ...module, _id: uuidv4(), lessons: [] };
+    course.modules = [...(course.modules || []), newModule];
+    await course.save();
+    return newModule;
+  }
 
-function updateModule(moduleId, moduleUpdates) {
-  const { modules } = db;
-  // eslint-disable-next-line @next/next/no-assign-module-variable
-  const module = modules.find((module) => module._id === moduleId);
-  Object.assign(module, moduleUpdates);
-  return module;
-}
+  async function deleteModule(moduleId) {
+    const courses = await model.find({ "modules._id": moduleId });
+    if (!courses.length) return { deleted: false };
+    const course = courses[0];
+    const before = course.modules.length;
+    course.modules = course.modules.filter((m) => m._id !== moduleId);
+    await course.save();
+    const after = course.modules.length;
+    return { deleted: before !== after };
+  }
 
+  async function updateModule(moduleId, moduleUpdates) {
+    const courses = await model.find({ "modules._id": moduleId });
+    if (!courses.length) throw new Error("Module not found");
+    const course = courses[0];
+    // eslint-disable-next-line @next/next/no-assign-module-variable
+    const module = course.modules.find((m) => m._id === moduleId);
+    Object.assign(module, moduleUpdates);
+    await course.save();
+    return module;
+  }
 
- return {
-   findModulesForCourse, createModule,deleteModule,updateModule
- };
+  return { findModulesForCourse, createModule, deleteModule, updateModule };
 }

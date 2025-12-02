@@ -7,7 +7,7 @@ import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModulesRoutes from "./Kambaz/Modules/routes.js";
-import AssignmentsRoutes from "./Assignments/routes.js";
+import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 import mongoose from "mongoose";
 const app = express();
 
@@ -17,7 +17,6 @@ app.use(
    origin: process.env.CLIENT_URL || "http://localhost:3000",
  })
 );
-
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",

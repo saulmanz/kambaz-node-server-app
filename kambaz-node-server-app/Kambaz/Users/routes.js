@@ -26,11 +26,11 @@ export default function UserRoutes(app) {
     const users = await dao.findAllUsers();
     res.json(users);
   };
+
   const findUserById = async (req, res) => {
     const user = await dao.findUserById(req.params.userId);
     res.json(user);
   };
-
   
   const updateUser = async (req, res) => {
     const { userId } = req.params;
@@ -42,8 +42,6 @@ export default function UserRoutes(app) {
     }
     res.json(currentUser);
   };
-
-
 
   const signup = async (req, res) => {
     const user = await dao.findUserByUsername(req.body.username);

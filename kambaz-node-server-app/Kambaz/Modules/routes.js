@@ -1,39 +1,46 @@
 import ModulesDao from "../Modules/dao.js";
-export default function ModulesRoutes(app, db) {
-  const dao = ModulesDao(db);
 
-  const findModulesForCourse = (req, res) => {
-    const { courseId } = req.params;
-    const modules = dao.findModulesForCourse(courseId);
-    res.json(modules);
-  }
+export default function ModulesRoutes(app) {
+  const dao = ModulesDao();
 
-  const createModuleForCourse = (req, res) => {
-    const { courseId } = req.params;
-    // eslint-disable-next-line @next/next/no-assign-module-variable
-    const module = {
-      ...req.body,
-      course: courseId,
-    };
-    const newModule = dao.createModule(module);
-    res.send(newModule);
-  }
-
-    const deleteModule = (req, res) => {
-    const { moduleId } = req.params;
-    const status = dao.deleteModule(moduleId);
-    res.send(status);
+  app.get("/api/courses/:courseId/modules", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const modules = await dao.findModulesForCourse(courseId);
+      res.json(modules);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
-    app.delete("/api/modules/:moduleId", deleteModule);
+  });
 
-const updateModule = async (req, res) => {
-  const { moduleId } = req.params;
-  const moduleUpdates = req.body;
-  const status = await dao.updateModule(moduleId, moduleUpdates);
-  res.send(status);
-}
-app.put("/api/modules/:moduleId", updateModule);
+  app.post("/api/courses/:courseId/modules", async (req, res) => {
+    try {
+      const { courseId } = req.params;
+      const moduleData = { ...req.body, course: courseId };
+      const newModule = await dao.createModule(moduleData);
+      res.json(newModule);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-  app.post("/api/courses/:courseId/modules", createModuleForCourse);
-  app.get("/api/courses/:courseId/modules", findModulesForCourse);
+  app.put("/api/modules/:moduleId", async (req, res) => {
+    try {
+      const { moduleId } = req.params;
+      const updatedModule = await dao.updateModule(moduleId, req.body);
+      res.json(updatedModule);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.delete("/api/modules/:moduleId", async (req, res) => {
+    try {
+      const { moduleId } = req.params;
+      const result = await dao.deleteModule(moduleId);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 }
