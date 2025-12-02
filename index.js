@@ -13,25 +13,25 @@ import mongoose from "mongoose";
 
 const app = express();
 
-const allowedOrigins = [
-  process.env.CLIENT_URL || "http://localhost:3000",
-  "https://kambaz-next-6bvf8wprx-saulmanzs-projects.vercel.app",
-  "https://kambaz-next-js-git-a6-saulmanzs-projects.vercel.app",
-];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
+  .split(",")
+  .map(url => url.trim());
 
 app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
+      if (!origin) return callback(null, true); // allow server-to-server requests
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
         const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
         return callback(new Error(msg), false);
       }
-      return callback(null, true);
     },
   })
 );
+
 
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING ||
