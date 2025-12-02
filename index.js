@@ -13,29 +13,37 @@ import mongoose from "mongoose";
 
 const app = express();
 
+// Read allowed origins from environment variable and clean up spaces
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
   .split(",")
-  .map(url => url.trim());
+  .map(url => url.trim())
+  .filter(Boolean); // remove empty strings just in case
 
 app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
       if (!origin) return callback(null, true); // allow server-to-server requests
+
+      // Check if origin matches any allowed origin
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
-      } else {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
       }
+
+      // Optional: allow all Vercel preview URLs automatically
+      const vercelRegex = /^https:\/\/kambaz-next(-[a-z0-9]+)?-saulmanzs-projects\.vercel\.app$/;
+      if (vercelRegex.test(origin)) {
+        return callback(null, true);
+      }
+
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
     },
   })
 );
 
-
 const CONNECTION_STRING =
-  process.env.DATABASE_CONNECTION_STRING ||
-  "mongodb://127.0.0.1:27017/kambaz";
+  process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
 
 mongoose
   .connect(CONNECTION_STRING)
