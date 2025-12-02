@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 import CourseModel from "./model.js";
 
 export default function CoursesDao() {
-  const findAllCourses = () => CourseModel.find({}, { name: 1, description: 1 });
+const findAllCourses = () =>
+  CourseModel.find({}, { _id: 1, name: 1, description: 1 });
 
   const findCoursesForUser = async (userId, enrollmentsModel) => {
     const enrollments = await enrollmentsModel.find({ user: userId }).populate("course");
