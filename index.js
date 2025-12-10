@@ -9,6 +9,8 @@ import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModulesRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentsRoutes from "./Assignments/routes.js";
 const app = express();
+app.use(express.json());
+const isProd = process.env.SERVER_ENV === "production";
 
 app.use(
  cors({
@@ -23,16 +25,16 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   cookie: {
-    sameSite: "lax",
-    secure: false,
-  },
+    secure: isProd,
+    httpOnly: true,
+    sameSite: isProd ? "none" : "lax"
+  }
 };
 
 if (process.env.SERVER_ENV !== "development") {
   sessionOptions.proxy = true;
 }
 
-app.use(express.json());
 app.use(session(sessionOptions));
 Lab5(app);                      
 UserRoutes(app, db);
