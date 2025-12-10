@@ -3,42 +3,44 @@ export default function UserRoutes(app, db) {
  const dao = UsersDao(db);
   const createUser = (req, res) => { };
   const deleteUser = (req, res) => { };
-  const findAllUsers = (req, res) => { };
+  const findAllUsers = (req, res) => {
+    const users = dao.findAllUsers();
+    res.json(users);
+  };
+
   const findUserById = (req, res) => { };
-const updateUser = (req, res) => {
-  const userId = req.params.userId;
-  const updates = req.body;
+  const updateUser = (req, res) => {
+    const userId = req.params.userId;
+    const updates = req.body;
 
-  const updated = dao.updateUser(userId, updates);
+    const updated = dao.updateUser(userId, updates);
 
-  if (!updated) {
-    return res.status(404).json({ message: "User not found" });
-  }
+    if (!updated) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-  if (req.session.currentUser && req.session.currentUser._id === userId) {
-    req.session.currentUser = updated;
-  }
+    if (req.session.currentUser && req.session.currentUser._id === userId) {
+      req.session.currentUser = updated;
+    }
 
-  res.json(updated);
-};
+    res.json(updated);
+  };
 
 
   const signup = (req, res) => {
-    const user = dao.findUserByUsername(req.body.username);
-    if (user) {
-      res.status(400).json(
-        { message: "Username already in use" });
-      return;
-    }
-    const currentUser = dao.findUserByCredentials(username, password);
-    if (currentUser) {
-      req.session["currentUser"] = currentUser;
-      res.json(currentUser);
-    } else {
-      res.status(401).json({ message: "Unable to login. Try again later." });
+    const { username, password } = req.body;
+
+    const existing = dao.findUserByUsername(username);
+    if (existing) {
+      return res.status(400).json({ message: "Username already in use" });
     }
 
+    const newUser = dao.createUser({ username, password });
+    req.session.currentUser = newUser;
+
+    res.json(newUser);
   };
+
 
   
 const signin = (req, res) => {
