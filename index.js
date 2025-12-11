@@ -25,24 +25,19 @@ app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow server-to-server requests
+      if (!origin) return callback(null, true); // server-to-server
 
-      // Check if origin matches any allowed origin
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+      if (allowedOrigins.includes(origin)) return callback(null, true);
 
-      // Optional: allow all Vercel preview URLs automatically
-      const vercelRegex = /^https:\/\/kambaz-next(-[a-z0-9]+)?-saulmanzs-projects\.vercel\.app$/;
-      if (vercelRegex.test(origin)) {
-        return callback(null, true);
-      }
+      const vercelRegex = /^https:\/\/kambaz-next.*-saulmanzs-projects\.vercel\.app$/;
+      if (vercelRegex.test(origin)) return callback(null, true);
 
       const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
       return callback(new Error(msg), false);
     },
   })
 );
+
 
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
